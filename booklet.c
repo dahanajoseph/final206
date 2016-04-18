@@ -5,61 +5,19 @@
 #define boolean int
 #define FALSE  0
 #define TRUE 1
-// withdraw : amount withdraw, new balance, current hour date, name,
-// transfer : same + to who
-// deposite : same
-// file : book.txt 
-// 1. number of the account
-// 1. Type of operation withdraw, deposite, transfer
-// 2. date
-// 3. amount
-// 4. new balance
-// linefeed
 
-void add(char *number, char *operation, char *amount, char *balance);
-void read(char *number, char *operation);
-boolean exist(char *number);
+void add(char *id, char *operation, char *amount, char *balance);
+void read(char *id, char *operation);
+boolean exist(char *id);
 
 
-int main(int argc, char *argv[]){
+void read(char *id, char *operation){
 
-
-	if(argc==1){
-		printf("RBC-history.c : ERROR. No argument provided.");
-		return 1;
-	}
-
-	else if(argc==3){
-
-		read(argv[1], argv[2]);
-		return 0;
-
-	}
-
-	else if(argc==5){
-
-	        add(argv[1], argv[2], argv[3], argv[4]);
-        	return 0;
-
-	}
-
-	else {
-		printf("RBC-history.c : ERROR. Too few or too much arguments provided.");
-		return 1;
-	}
-
-	return 0;
-
-}
-
-
-void read(char *number, char *operation){
-
-	if(exist(number)==FALSE){
+	if(exist(id)==FALSE){
 		return;
 	}
 
-	FILE *book = fopen(number, "r");
+	FILE *book = fopen(id, "r");
 
 	char data[50];
 	char datacpy[50];
@@ -80,8 +38,12 @@ void read(char *number, char *operation){
 
 		while(!feof(book)){
 			if(strcmp(token, operation)==0){
+
 				//operation
 				printf("%s", data);
+				//date
+		                fgets(data, 49, book);
+                                printf("%s", data);
 				// amount
 				fgets(data, 49, book);
 				printf("%s", data);
@@ -97,6 +59,7 @@ void read(char *number, char *operation){
 			else {
                         	fgets(data, 49, book);
                         	fgets(data, 49, book);
+                                fgets(data, 49, book);
                         	fgets(data, 49, book);
 				strcpy(datacpy, data);
                 	        strtok(datacpy," \n"); 
@@ -115,9 +78,9 @@ void read(char *number, char *operation){
 }
 
 
-void add(char *number, char *operation, char *amount, char *balance){
+void add(char *id, char *operation, char *amount, char *balance){
 
-	if (exist(number) == FALSE){
+	if (exist(id) == FALSE){
 		return;
 	}
 
@@ -126,9 +89,9 @@ void add(char *number, char *operation, char *amount, char *balance){
 	system("export DATE=`echo $@`");
 	char *date = getenv("DATE");
 	
-	FILE *book = fopen(number, "a");
+	FILE *book = fopen(id, "a");
 
-	fprintf(book,"Date: %s\nOperation: %s\nAmount:%s$\nBalance:%s$\n",date,operation, amount, balance);
+	fprintf(book,"Operation: %s\nDate: %s\nAmount:%s$\nBalance:%s$\n",operation, date, amount, balance);
 
 	fclose(book);
 
@@ -136,9 +99,9 @@ void add(char *number, char *operation, char *amount, char *balance){
 
 }
 
-boolean exist(char *number){
+boolean exist(char *id){
 
-        FILE *members = fopen("members.txt", "r");
+        FILE *members = fopen("../members.txt", "r");
 
         if(members==NULL){
                 printf("No file with the members of RBC.\n");
@@ -152,7 +115,7 @@ boolean exist(char *number){
 
         int exist = FALSE;
         while(!feof(members)){
-                if(strcmp(line_m, number)==0){
+                if(strcmp(line_m, id)==0){
                         exist = TRUE;
                         break;
                 }
@@ -174,3 +137,36 @@ boolean exist(char *number){
 	return exist;
 
 }
+
+
+/*int main(int argc, char *argv[]){
+
+
+        if(argc==1){
+                printf("RBC-history.c : ERROR. No argument provided.");
+                return 1;
+        }
+
+        else if(argc==3){
+
+                read(argv[1], argv[2]);
+                return 0;
+
+        }
+
+        else if(argc==5){
+
+                add(argv[1], argv[2], argv[3], argv[4]);
+                return 0;
+
+        }
+
+        else {
+                printf("RBC-history.c : ERROR. Too few or too much arguments provided.");
+                return 1;
+        }
+
+        return 0;
+
+}*/
+
